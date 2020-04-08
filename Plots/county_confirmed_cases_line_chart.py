@@ -8,7 +8,7 @@ from datetime import date, timedelta
 cal = calendar.Calendar()
 
 # Load CSV file from Datasets folder
-df = pd.read_csv('time_series/time_series_covid19_confirmed_US.csv')
+df = pd.read_csv('../Datasets/time_series_covid19_confirmed_US.csv')
 
 
 class DfCounty:
