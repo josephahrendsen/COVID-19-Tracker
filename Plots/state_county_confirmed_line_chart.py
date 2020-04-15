@@ -6,20 +6,14 @@ import pandas as pd
 import plotly.graph_objs as go
 from Plots import helper
 
-# TODO
-"""
-Make county selection limited to counties in selected state
-Don't allow invalid input
-"""
-
-# Most recent date on the csv's in Datasets
-date_for_graph = '4/6/20'
-
 # Load CSV files from Datasets folder
-df_confirmed = pd.read_csv('../Datasets/time_series_covid19_confirmed_US.csv')
+df_confirmed = pd.read_csv('../Datasets/time_series_covid19_confirmed_US_new.csv')
 df_deaths = pd.read_csv('../Datasets/time_series_covid19_deaths_US.csv')
 
 app = dash.Dash()
+
+states = helper.States()
+states.set_state("North Carolina")
 
 # Layout
 app.layout = html.Div(children=[
@@ -42,12 +36,7 @@ app.layout = html.Div(children=[
     dcc.Dropdown(
         id='select-state',
         options=[
-            {'label': 'North Carolina', 'value': 'North Carolina'},
-            {'label': 'South Carolina', 'value': 'South Carolina'},
-            {'label': 'Georgia', 'value': 'Georgia'},
-            {'label': 'New York', 'value': 'New York'},
-            {'label': 'California', 'value': 'California'},
-            {'label': 'Texas', 'value': 'Texas'}
+            {'label': k, 'value': k} for k in states.get_state_index_code_keys()
         ],
         value='North Carolina'
     ),
@@ -56,18 +45,19 @@ app.layout = html.Div(children=[
     dcc.Dropdown(
         id='select-county',
         options=[
-            {'label': 'Orange', 'value': 'Orange'},
-            {'label': 'Mecklenburg', 'value': 'Mecklenburg'},
-        ],
-        value='Orange'
-    )
+            # {'label': k, 'value': k} for k in states.get_counties_in_state()
+            # {'label': 'Orange', 'value': 'North Carolina'},
 
+        ],
+        value=states.get_counties_in_state()[0]
+    )
 ])
 
 
-@app.callback([Output('graph1', 'figure'), Output('graph2', 'figure')],
-                     [Input('select-state', 'value'), Input('select-county', 'value')])
-def update_figure(selected_state, selected_county):
+@app.callback(Output('graph1', 'figure'),
+              [Input('select-state', 'value')])
+def update_graph1(selected_state):
+    states.set_state(selected_state)
 
     # Preparing Data
     cases = helper.Confirmed(selected_state)
@@ -77,23 +67,47 @@ def update_figure(selected_state, selected_county):
                         name='Cases')
     data = [trace1]
     state_graph = {'data': data,
-            'layout': go.Layout(
-                title='Total number of Confirmed Cases and Deaths by County in ' + cases.get_state_name(),
-                xaxis={'title': 'Date'},
-                yaxis={'title': 'Number of confirmed cases and deaths'})}
+                   'layout': go.Layout(
+                       title='Total number of Confirmed Cases in ' + cases.get_state_name(),
+                       xaxis={'title': 'Date'},
+                       yaxis={'title': 'Number of confirmed cases'})}
+    return state_graph
 
-    #  County Graph
-    cases.set_county(selected_county)  # Select county
+
+@app.callback(
+    Output('graph2', 'figure'),
+    [Input('select-state', 'value'), Input('select-county', 'value')])
+def update_graph2(selected_state, selected_county):
+    # County Graph
+    cases = helper.Confirmed(selected_state)
+    states.set_state(selected_state)
+
+    cases.set_county(selected_county)
     trace1 = go.Scatter(x=cases.get_dates_since_start(), y=cases.get_county_cases_over_time(), mode='lines',
                         name='Cases')
     data = [trace1]
     county_graph = {'data': data,
-                   'layout': go.Layout(
-                       title='Total number of Confirmed Cases in ' + cases.get_county_name() + ' County',
-                       xaxis={'title': 'Date'},
-                       yaxis={'title': 'Number of confirmed cases and deaths'})}
+                    'layout': go.Layout(
+                        title='Total number of Confirmed Cases in ' + cases.get_county_name() + ' County, '
+                              + cases.get_state_name(),
+                        xaxis={'title': 'Date'},
+                        yaxis={'title': 'Number of confirmed cases'})}
 
-    return state_graph, county_graph
+    return county_graph
+
+
+@app.callback(
+    Output('select-county', 'options'), [Input('select-state', 'value')])
+def update_county_dropdown_menu(selected_state):
+    states.set_state(selected_state)
+    return [{'label': k, 'value': k} for k in states.get_counties_in_state()]
+
+
+@app.callback(
+    Output('select-county', 'value'),
+    [dash.dependencies.Input('select-county', 'options')])
+def set_cities_value(available_options):
+    return available_options[0]['value']
 
 
 if __name__ == '__main__':

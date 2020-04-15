@@ -115,3 +115,98 @@ class Confirmed:
 
     def get_days(self):
         return self.days
+
+
+class States:
+    df_usa = pd.read_csv('../Datasets/states_and_counties.csv')
+
+    df_states = df_usa['Province_State'].unique()
+    sorted_df = df_usa.groupby(['Province_State'])['Admin2'].apply(", ".join)
+
+    counties = []
+    state = ""
+
+    state_index_codes = {
+        'Alabama': 0,
+        'Alaska': 1,
+        'Arizona': 2,
+        'Arkansas': 3,
+        'California': 4,
+        'Colorado': 5,
+        'Connecticut': 6,
+        'Delaware': 7,
+        'Florida': 8,
+        'Georgia': 9,
+        'Hawaii': 10,
+        'Idaho': 11,
+        'Illinois': 12,
+        'Indiana': 13,
+        'Iowa': 14,
+        'Kansas': 15,
+        'Kentucky': 16,
+        'Louisiana': 17,
+        'Maine': 18,
+        'Maryland': 19,
+        'Massachusetts': 20,
+        'Michigan': 21,
+        'Minnesota': 22,
+        'Mississippi': 23,
+        'Missouri': 24,
+        'Montana': 25,
+        'Nebraska': 26,
+        'Nevada': 27,
+        'New Hampshire': 28,
+        'New Jersey': 29,
+        'New Mexico': 30,
+        'New York': 31,
+        'North Carolina': 32,
+        'North Dakota': 33,
+        'Ohio': 34,
+        'Oklahoma': 35,
+        'Oregon': 36,
+        'Pennsylvania': 37,
+        'Rhode Island': 38,
+        'South Carolina': 39,
+        'South Dakota': 40,
+        'Tennessee': 41,
+        'Texas': 42,
+        'Utah': 43,
+        'Vermont': 44,
+        'Virginia': 45,
+        'Washington': 46,
+        'West Virginia': 47,
+        'Wisconsin': 48,
+        'Wyoming': 49,
+    }
+
+    def set_state(self, state):
+        self.state = state
+        self.find_counties_in_state()
+
+    def get_state(self):
+        return self.state
+
+    def get_state_index_code(self):
+        return self.state_index_codes[self.get_state()]
+
+    def get_state_index_code_keys(self):
+        return self.state_index_codes.keys()
+
+    def find_counties_in_state(self):
+        sorted_as_string = self.sorted_df[self.get_state_index_code()]
+        counties = []
+        word = ''
+        count = 0
+        for i in range(len(sorted_as_string)):
+            if sorted_as_string[i] != ',':
+                word += sorted_as_string[i]
+            else:
+                counties.append(word.strip())
+                count += 1
+                word = ''
+        self.counties = counties
+
+    def get_counties_in_state(self):
+        return self.counties
+
+
