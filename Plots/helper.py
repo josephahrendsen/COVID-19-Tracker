@@ -38,9 +38,11 @@ class Confirmed:
         return self.df_state
 
     def get_state_name(self):
+        """ Accessor for state (str) """
         return self.state
 
     def set_county(self, county):
+        """ Mutator for county """
         self.county = county
         self.find_county()
 
@@ -52,10 +54,11 @@ class Confirmed:
         return self.df_county
 
     def get_county_name(self):
-        """Return name of a county (str)"""
+        """ Return name of a county (str) """
         return self.county
 
     def get_county_cases_over_time(self):
+        """ Return list of daily confirmed cases for a county (int[]) """
         confirmed = []  # Create list of confirmed cases
         for i in range(len(self.get_days())):
             # add to confirmed list; formatted as [column][row]
@@ -63,12 +66,15 @@ class Confirmed:
         return confirmed
 
     def get_county_index(self):
+        """ Accessor for county_index_num (int) """
         return self.county_index_num
 
     def get_latest_data_date(self):
+        """ Accessor for latest_data_date (date) """
         return self.latest_data_date
 
     def get_total_state_cases(self):
+        """ Return total number of cases in a state (int) """
         filtered_df_confirmed = df_cases[df_cases['Province_State'] == self.state]
         new_df_confirmed = filtered_df_confirmed.groupby(['Admin2'])[self.get_latest_data_date()].sum().reset_index()
         new_df_confirmed = new_df_confirmed.sort_values(by=[self.get_latest_data_date()], ascending=[False]).reset_index()
@@ -79,6 +85,7 @@ class Confirmed:
         return case_total
 
     def get_total_state_cases_over_time(self):
+        """ Return daily totals of confirmed cases each day since start in a state (int[]) """
         filtered_df_confirmed = df_cases[df_cases['Province_State'] == self.get_state_name()]
         filtered_df_confirmed = filtered_df_confirmed.reset_index()  # Reset indices
         num_of_counties = filtered_df_confirmed.__len__()
@@ -91,29 +98,36 @@ class Confirmed:
         return confirmed
 
     def get_all_counties(self):
+        """ Return all counties in a state sorted by highest to lowest number of confirmed cases """
         filtered_df_confirmed = df_cases[df_cases['Province_State'] == self.state]
         new_df_confirmed = filtered_df_confirmed.groupby(['Admin2'])[self.get_latest_data_date()].sum().reset_index()
         new_df_confirmed = new_df_confirmed.sort_values(by=[self.get_latest_data_date()], ascending=[False]).reset_index()
         return new_df_confirmed['Admin2']
 
     def get_all_counties_total_cases(self):
+        """ Return all counties current number of cases sorted highest to lowest (data frame object) """
+        print(self.get_latest_data_date())
         filtered_df_confirmed = df_cases[df_cases['Province_State'] == self.state]
         new_df_confirmed = filtered_df_confirmed.groupby(['Admin2'])[self.get_latest_data_date()].sum().reset_index()
         new_df_confirmed = new_df_confirmed.sort_values(by=[self.get_latest_data_date()], ascending=[False]).reset_index()
         return new_df_confirmed[self.get_latest_data_date()]
 
     def get_dates_since_start(self):
+        """ Calculate which dates to use from datasets (date[]) """
         days = []
         start_data_date = date(2020, 3, 1)
-        latest_data_date = date(2020, 4, 6)
+        latest_data_date = date(2020, 4, 12)
         delta = timedelta(days=1)
         while start_data_date <= latest_data_date:
-            days.append(start_data_date.strftime("%#m/%#d/%Y"))  # Add dates to days list
+            days.append(start_data_date.strftime("%#m/%#d/%y"))  # Add dates to days list
             start_data_date += delta
         self.days = days
+        self.start_data_date = date(2020, 3, 1).strftime("%#m/%#d/%y")
+        self.latest_data_date = date(2020, 4, 12).strftime("%#m/%#d/%y")
         return days
 
     def get_days(self):
+        """ Accessor for days (date[]) """
         return self.days
 
 

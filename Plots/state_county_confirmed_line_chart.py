@@ -2,13 +2,8 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-import pandas as pd
 import plotly.graph_objs as go
 from Plots import helper
-
-# Load CSV files from Datasets folder
-df_confirmed = pd.read_csv('../Datasets/time_series_covid19_confirmed_US_new.csv')
-df_deaths = pd.read_csv('../Datasets/time_series_covid19_deaths_US.csv')
 
 app = dash.Dash()
 
@@ -44,25 +39,26 @@ app.layout = html.Div(children=[
 
     dcc.Dropdown(
         id='select-county',
-        options=[
-            # {'label': k, 'value': k} for k in states.get_counties_in_state()
-            # {'label': 'Orange', 'value': 'North Carolina'},
-
-        ],
+        options=[],
         value=states.get_counties_in_state()[0]
-    )
+    ),
+    html.Br(),
+    html.Br()
 ])
 
 
 @app.callback(Output('graph1', 'figure'),
               [Input('select-state', 'value')])
 def update_graph1(selected_state):
+    """Return a graph
+
+    Update state graph with selected state
+    """
     states.set_state(selected_state)
 
     # Preparing Data
     cases = helper.Confirmed(selected_state)
 
-    #  State Graph
     trace1 = go.Scatter(x=cases.get_dates_since_start(), y=cases.get_total_state_cases_over_time(), mode='lines',
                         name='Cases')
     data = [trace1]
@@ -78,7 +74,10 @@ def update_graph1(selected_state):
     Output('graph2', 'figure'),
     [Input('select-state', 'value'), Input('select-county', 'value')])
 def update_graph2(selected_state, selected_county):
-    # County Graph
+    """Return a graph
+
+    Update county graph with selected state and county
+    """
     cases = helper.Confirmed(selected_state)
     states.set_state(selected_state)
 
@@ -99,6 +98,10 @@ def update_graph2(selected_state, selected_county):
 @app.callback(
     Output('select-county', 'options'), [Input('select-state', 'value')])
 def update_county_dropdown_menu(selected_state):
+    """Return dropdown options for select-county
+
+    Update county dropdown menu with counties in selected state
+    """
     states.set_state(selected_state)
     return [{'label': k, 'value': k} for k in states.get_counties_in_state()]
 
