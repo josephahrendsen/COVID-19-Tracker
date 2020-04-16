@@ -2,12 +2,6 @@ import pandas as pd
 import calendar
 from datetime import date, timedelta
 
-#TODO
-"""
-Reset indexing for county_index_num
-Fix updating spreadsheet not working
-"""
-
 # Create calendar object
 cal = calendar.Calendar()
 
@@ -17,6 +11,31 @@ df_deaths = pd.read_csv('../Datasets/time_series_covid19_deaths_US.csv')
 
 
 class Confirmed:
+    """
+    A class used to simplify creating graphs based on confirmed cases.
+
+    ...
+
+    Attributes
+    ----------
+    df_state : data frame object
+        a formatted data frame containing data of a specified state
+    df_county : data frame object
+        a formatted data frame containing data of a specified county
+    county_index_num : int
+        the index number of a specified county in the dataset
+    state : str
+        the name of the specified state
+    county : str
+        the name of the specified county
+    days : date[]
+        list of dates used from dataset
+    start_data_date : str
+        start date date represented as a string
+    latest_data_date: str
+        latest date of data represented as a string
+    """
+
     df_state = 0
     df_county = 0
     county_index_num = 0
@@ -116,22 +135,74 @@ class Confirmed:
         """ Calculate which dates to use from datasets (date[]) """
         days = []
         start_data_date = date(2020, 3, 1)
-        latest_data_date = date(2020, 4, 12)
+        latest_data_date = date(2020, 4, 14)
         delta = timedelta(days=1)
         while start_data_date <= latest_data_date:
             days.append(start_data_date.strftime("%#m/%#d/%y"))  # Add dates to days list
             start_data_date += delta
         self.days = days
         self.start_data_date = date(2020, 3, 1).strftime("%#m/%#d/%y")
-        self.latest_data_date = date(2020, 4, 12).strftime("%#m/%#d/%y")
+        self.latest_data_date = date(2020, 4, 14).strftime("%#m/%#d/%y")
         return days
 
     def get_days(self):
         """ Accessor for days (date[]) """
         return self.days
 
+    def get_daily_state_cases(self):
+        """ Return daily change in confirmed cases in a specified state """
+        daily_cases = []
+        count = 0
+        state_cases = self.get_total_state_cases_over_time()  # Program runs faster when this is duplicated
+        for i in state_cases:
+            if count < state_cases.__len__() - 1:
+                daily_cases.append(
+                    state_cases[count+1] - state_cases[count])
+                count += 1
+        return daily_cases
+
+    def get_daily_county_cases(self):
+        """ Return daily change in confirmed cases in a specified county """
+        daily_cases = []
+        count = 0
+        county_cases = self.get_county_cases_over_time()
+
+        for i in county_cases:
+            if count < county_cases.__len__() - 1:
+                if county_cases[count+1] - county_cases[count] < 0:
+                    daily_cases.append(0)
+                else:
+                    daily_cases.append(county_cases[count+1] - county_cases[count])
+                count += 1
+        return daily_cases
+
+
+a = Confirmed("North Carolina")
+a.set_county("Durham")
+print(a.get_daily_county_cases())
 
 class States:
+    """
+    A class used to find information about states
+
+    ...
+
+    Attributes
+    ----------
+    df_usa : data frame
+        data frame of entire states and counties dataset
+    df_states : data frame
+        a formatted data frame containing data of all 50 states
+    softed_df : data frame
+        a formatted data frame to group all counties with their associated state separated by commas
+    counties : str[]
+        list of counties formatted as strings
+    state : str
+        name of specified state
+    state_index_codes : (dict of str: int)
+        dictionary of all states and their associated index
+
+    """
     df_usa = pd.read_csv('../Datasets/states_and_counties.csv')
 
     df_states = df_usa['Province_State'].unique()
@@ -194,19 +265,24 @@ class States:
     }
 
     def set_state(self, state):
+        """ Mutator for state """
         self.state = state
         self.find_counties_in_state()
 
     def get_state(self):
+        """ Accessor for state """
         return self.state
 
     def get_state_index_code(self):
+        """ Accessor for state_index_code """
         return self.state_index_codes[self.get_state()]
 
     def get_state_index_code_keys(self):
+        """ Accessor for keys in state_index_codes """
         return self.state_index_codes.keys()
 
     def find_counties_in_state(self):
+        """ Find all counties in each state and separate them into separate words and add to global counties list"""
         sorted_as_string = self.sorted_df[self.get_state_index_code()]
         counties = []
         word = ''
@@ -221,6 +297,7 @@ class States:
         self.counties = counties
 
     def get_counties_in_state(self):
+        """ Accessor for counties """
         return self.counties
 
 
