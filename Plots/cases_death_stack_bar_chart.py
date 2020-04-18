@@ -4,9 +4,10 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.graph_objs as go
+from Plots import helper
 
 # Most recent date on the csv's in Datasets
-date_for_graph = '4/6/20'
+date_for_graph = '4/14/20'
 
 # Load CSV files from Datasets folder
 df_confirmed = pd.read_csv('../Datasets/time_series_covid19_confirmed_US.csv')
@@ -14,6 +15,8 @@ df_deaths = pd.read_csv('../Datasets/time_series_covid19_deaths_US.csv')
 
 app = dash.Dash()
 
+states = helper.States()
+states.set_state("North Carolina")
 # Layout
 app.layout = html.Div(children=[
     html.H1(children='COVID-19 Dash',
@@ -35,12 +38,7 @@ app.layout = html.Div(children=[
     dcc.Dropdown(
         id='select-state',
         options=[
-            {'label': 'North Carolina', 'value': 'North Carolina'},
-            {'label': 'South Carolina', 'value': 'South Carolina'},
-            {'label': 'Georgia', 'value': 'Georgia'},
-            {'label': 'New York', 'value': 'New York'},
-            {'label': 'California', 'value': 'California'},
-            {'label': 'Texas', 'value': 'Texas'}
+            {'label': k, 'value': k} for k in states.get_state_index_code_keys()
         ],
         value='North Carolina'
     )
@@ -50,30 +48,37 @@ app.layout = html.Div(children=[
 @app.callback(Output('graph1', 'figure'),
               [Input('select-state', 'value')])
 def update_figure(selected_state):
-    date_d = date_for_graph
-    date_c = date_for_graph + '20'
+    states.set_state(selected_state)
+
+    date = date_for_graph
 
     filtered_df_confirmed = df_confirmed[df_confirmed['Province_State'] == selected_state]
     filtered_df_deaths = df_deaths[df_deaths['Province_State'] == selected_state]
-    # Creating
-    new_df_confirmed = filtered_df_confirmed.groupby(['Admin2'])[date_c].sum().reset_index()
-    new_df_deaths = filtered_df_deaths.groupby(['Admin2'])[date_d].sum().reset_index()
+
+    new_df_confirmed = filtered_df_confirmed.groupby(['Admin2'])[date].sum().reset_index()
+    new_df_deaths = filtered_df_deaths.groupby(['Admin2'])[date].sum().reset_index()
 
     # Sorting values and select first 20 Counties
-    new_df_confirmed = new_df_confirmed.sort_values(by=[date_c], ascending=[False]).head(10).reset_index()
-    new_df_deaths = new_df_deaths.sort_values(by=[date_d], ascending=[False]).head(10).reset_index()
+    if selected_state == 'Hawaii' or selected_state == 'Delaware' or selected_state == 'Connecticut':
+        new_df_confirmed = new_df_confirmed.sort_values(by=[date], ascending=[False]).head(4).reset_index()
+        new_df_deaths = new_df_deaths.sort_values(by=[date], ascending=[False]).head(4).reset_index()
+    else:
+        new_df_confirmed = new_df_confirmed.sort_values(by=[date], ascending=[False]).head(10).reset_index()
+        new_df_deaths = new_df_deaths.sort_values(by=[date], ascending=[False]).head(10).reset_index()
 
     # Preparing data
-    trace1 = go.Bar(x=new_df_confirmed['Admin2'], y=new_df_confirmed[date_c], name='Confirmed',
+    trace1 = go.Bar(x=new_df_confirmed['Admin2'], y=new_df_confirmed[date], name='Confirmed',
                     marker={'color': '#CD7F32'})
-    trace2 = go.Bar(x=new_df_deaths['Admin2'], y=new_df_deaths[date_d], name='Deaths', marker={'color': '#9EA0A1'})
+    trace2 = go.Bar(x=new_df_deaths['Admin2'], y=new_df_deaths[date], name='Deaths',
+                    marker={'color': '#9EA0A1'})
 
     data = [trace1, trace2]
     return {'data': data,
             'layout': go.Layout(
-                title='Total number of Confirmed Cases and Deaths by County as of {0}'.format(date_c),
+                title='Total number of Confirmed Cases and Deaths by County as of {0}'.format(date),
                 xaxis={'title': 'County'},
-                yaxis={'title': 'Number of confirmed cases and deaths'})}
+                yaxis={'title': 'Number of confirmed cases and deaths'},
+                barmode='stack')}
 
 
 if __name__ == '__main__':
