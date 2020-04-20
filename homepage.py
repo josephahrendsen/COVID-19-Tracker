@@ -26,10 +26,10 @@ layout = html.Div(className='full-home-page', children=[
             html.A('Effects on the United States', href='/#', style={'color': 'white'})
         ]),
         html.Div(className='home-page-div', children=[
-            html.A('What to do', href='/#', style={'color': 'white'})
+            html.A('What to do', href='/info/what_to_do', style={'color': 'white'})
         ]),
         html.Div(className='home-page-div', children=[
-            html.A('About', href='/#', style={'color': 'white'})
+            html.A('About', href='/info/about', style={'color': 'white'})
         ]),
         ], style={'marginBottom': 50, 'marginTop': 25, 'width': '1000px',
                   'border': '2px solid black', 'overflow': 'hidden', 'margin': '0 auto'}

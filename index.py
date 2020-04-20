@@ -8,6 +8,7 @@ from graphs import Graphs
 from Plots import state_county_confirmed_line_chart, daily_changes_bar_chart
 from Plots import state_county_death_line_chart
 from Plots import us_cases, us_deaths
+from info import about, what_to_do
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
@@ -28,6 +29,10 @@ def display_page(pathname):
         return us_deaths.get_layout()
     elif pathname == '/Plots/state_county_death_line_chart':
         return state_county_death_line_chart.get_layout()
+    elif pathname == '/info/about':
+        return about.get_layout()
+    elif pathname == '/info/what_to_do':
+        return what_to_do.get_layout()
     elif pathname == '/graphs':
         return Graphs()
     else:
