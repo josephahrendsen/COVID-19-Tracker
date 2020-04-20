@@ -2,51 +2,75 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+
 import plotly.graph_objs as go
 from Plots import helper
+from navbar import Navbar
+from app import app
 
-app = dash.Dash()
+nav = Navbar()
+
 
 states = helper.States()
 states.set_state("North Carolina")
 
-# Layout
-app.layout = html.Div(children=[
-    html.H1(children='COVID-19 Dash',
+layout = html.Div(className='graph-layout', children=[
+    # Layout for Line Graph
+    html.H1(children='Cases of COVID-19 in Each State and County',
             style={
                 'textAlign': 'center',
-                'color': '#ef3e18'
+                'color': 'white'
             }
             ),
-    html.Div('Web dashboard for Coronavirus Data', style={'textAlign': 'center'}),
-    html.Div('Coronavirus COVID-19 State and County Cases', style={'textAlign': 'center'}),
-    html.Br(),
-    html.Br(),
     html.Hr(style={'color': '#7FDBFF'}),
-    html.H3('Interactive Line chart', style={'color': '#df1e56'}),
-    html.Div(
-        'This chart represents the total of confirmed cases in a state'),
-    dcc.Graph(id='graph1'),
-    html.Div('Please select a state', style={'color': '#ef3e18', 'margin': '10px'}),
+    html.H3('Interactive Line chart', style={'color': 'white'}),
+    html.Div('This chart represents the total number of confirmed cases in a state'),
+    html.Div('Please select a state', style={'color': '#ef3e18'}),
     dcc.Dropdown(
         id='select-state',
         options=[
             {'label': k, 'value': k} for k in states.get_state_index_code_keys()
         ],
-        value='North Carolina'
+        value='North Carolina',
+        style={'color': 'black'}
     ),
-    dcc.Graph(id='graph2'),
-
+    dcc.Graph(id='graph1'),
+    html.Br(),
+    html.Div('This chart represents the total number of confirmed cases in a county'),
+    html.Div('Please select a county', style={'color': '#ef3e18'}),
     dcc.Dropdown(
         id='select-county',
         options=[],
-        value=states.get_counties_in_state()[0]
+        value=states.get_counties_in_state()[0],
+        style={'color': 'black'}
     ),
+    dcc.Graph(id='graph2'),
+
     html.Br(),
-    html.Br()
+    html.Br(),
+    html.Br(),
+    html.Br(),
+
+
+    # Layout for Scatter Plot
+    html.H3('Scatter Plot for COVID-19 Cases by County ', style={'color': 'white'}),
+    html.Div(
+        'This scatter plot represents the Corona Virus cases per county in a given State.'),
+    html.Div('Please select a state', style={'color': '#ef3e18', 'margin': '10px'}),
+    dcc.Dropdown(
+        id='state-cases-scatter-plot-dropdown',
+        options=[
+            {'label': k, 'value': k} for k in states.get_state_index_code_keys()
+        ],
+        value='North Carolina',
+        style={'color': 'black'}
+
+    ),
+    dcc.Graph(id='state-cases-scatter-plot')
 ])
 
 
+# Line Graph
 @app.callback(Output('graph1', 'figure'),
               [Input('select-state', 'value')])
 def update_graph1(selected_state):
@@ -66,7 +90,8 @@ def update_graph1(selected_state):
                    'layout': go.Layout(
                        title='Total number of Confirmed Cases in ' + cases.get_state_name(),
                        xaxis={'title': 'Date'},
-                       yaxis={'title': 'Number of confirmed cases'})}
+                       yaxis={'title': 'Number of confirmed cases'}
+                   )}
     return state_graph
 
 
@@ -113,5 +138,35 @@ def set_cities_value(available_options):
     return available_options[0]['value']
 
 
-if __name__ == '__main__':
-    app.run_server(debug=False)
+# Scatter Plot
+@app.callback(Output('state-cases-scatter-plot', 'figure'),
+              [Input('state-cases-scatter-plot-dropdown', 'value')])
+def update_figure(selected_state):
+
+    states.set_state(selected_state)
+
+    cases = helper.Confirmed(selected_state)
+
+    trace1 = go.Scatter(
+        x=cases.get_all_counties_unsorted(),
+        y=cases.get_all_counties_total_cases_unsorted(),
+        text=cases.get_county_name(),
+        mode='markers')
+
+    data = [trace1]
+
+    scatter_plot = {'data': data,
+                   'layout': go.Layout(
+                       title='Cases by County in ' + cases.get_state_name(),
+                       xaxis={'title': 'County Name'},
+                       yaxis={'title': 'Number of confirmed cases'})}
+
+    return scatter_plot
+
+
+def get_layout():
+    complete_layout = html.Div([
+        nav,
+        layout
+    ])
+    return complete_layout

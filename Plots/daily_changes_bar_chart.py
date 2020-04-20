@@ -2,53 +2,55 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+import pandas as pd
 import plotly.graph_objs as go
 from Plots import helper
+from navbar import Navbar
+from app import app
 
-app = dash.Dash()
+nav = Navbar()
 
 states = helper.States()
 states.set_state("North Carolina")
 
 # Layout
-app.layout = html.Div(children=[
-    html.H1(children='COVID-19 Dash',
+layout = html.Div(className='graph-layout', children=[
+    html.H1(children='Daily Cases of COVID-19 in Each State and County',
             style={
                 'textAlign': 'center',
-                'color': '#ef3e18'
+                'color': 'white'
             }
             ),
-    html.Div('Web dashboard for Coronavirus Data', style={'textAlign': 'center'}),
-    html.Div('Coronavirus COVID-19 State and County Daily Confirmed Cases', style={'textAlign': 'center'}),
-    html.Br(),
-    html.Br(),
     html.Hr(style={'color': '#7FDBFF'}),
-    html.H3('Interactive Line chart', style={'color': '#df1e56'}),
-    html.Div(
-        'This chart represents the amount of daily confirmed cases reported each day'),
-    dcc.Graph(id='graph1'),
-    html.Div('Please select a state', style={'color': '#ef3e18', 'margin': '10px'}),
+    html.H3('Interactive Line chart', style={'color': 'white'}),
+    html.Div('This chart represents the amount of daily confirmed cases reported each day'),
+    html.Div('Please select a state', style={'color': '#ef3e18'}),
     dcc.Dropdown(
-        id='select-state',
+        id='daily-state-dropdown-bar-graph',
         options=[
             {'label': k, 'value': k} for k in states.get_state_index_code_keys()
         ],
-        value='North Carolina'
+        value='North Carolina',
+        style={'color': 'black'}
     ),
-    dcc.Graph(id='graph2'),
-
+    dcc.Graph(id='daily-state-bar-graph'),
+    html.Br(),
+    html.Div('This chart represents the total number of daily confirmed cases in a county'),
+    html.Div('Please select a county', style={'color': '#ef3e18'}),
     dcc.Dropdown(
-        id='select-county',
+        id='daily-county-dropdown-bar-graph',
         options=[],
-        value=states.get_counties_in_state()[0]
+        value=states.get_counties_in_state()[0],
+        style={'color': 'black'}
     ),
+    dcc.Graph(id='daily-county-bar-graph'),
     html.Br(),
     html.Br()
 ])
 
 
-@app.callback(Output('graph1', 'figure'),
-              [Input('select-state', 'value')])
+@app.callback(Output('daily-state-bar-graph', 'figure'),
+              [Input('daily-state-dropdown-bar-graph', 'value')])
 def update_graph1(selected_state):
     """Return a graph
 
@@ -71,8 +73,8 @@ def update_graph1(selected_state):
 
 
 @app.callback(
-    Output('graph2', 'figure'),
-    [Input('select-state', 'value'), Input('select-county', 'value')])
+    Output('daily-county-bar-graph', 'figure'),
+    [Input('daily-state-dropdown-bar-graph', 'value'), Input('daily-county-dropdown-bar-graph', 'value')])
 def update_graph2(selected_state, selected_county):
     """Return a graph
 
@@ -97,7 +99,7 @@ def update_graph2(selected_state, selected_county):
 
 
 @app.callback(
-    Output('select-county', 'options'), [Input('select-state', 'value')])
+    Output('daily-county-dropdown-bar-graph', 'options'), [Input('daily-state-dropdown-bar-graph', 'value')])
 def update_county_dropdown_menu(selected_state):
     """Return dropdown options for select-county
 
@@ -108,11 +110,16 @@ def update_county_dropdown_menu(selected_state):
 
 
 @app.callback(
-    Output('select-county', 'value'),
-    [dash.dependencies.Input('select-county', 'options')])
+    Output('daily-county-dropdown-bar-graph', 'value'),
+    [dash.dependencies.Input('daily-county-dropdown-bar-graph', 'options')])
 def set_cities_value(available_options):
     return available_options[0]['value']
 
 
-if __name__ == '__main__':
-    app.run_server(debug=False)
+def get_layout():
+    complete_layout = html.Div([
+        nav,
+        layout
+    ])
+    return complete_layout
+

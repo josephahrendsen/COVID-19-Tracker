@@ -1,0 +1,66 @@
+Div.home-page-div {
+    font-size: 34px;
+    width: 498px;
+    height: 100px;
+    text-align: center;
+    color: white;
+    vertical-align: middle;
+    border: 1px solid black;
+    float: left;
+}
+
+
+Button.button {
+    color: white;
+    width: 400px;
+    height: 150px;
+    font-size: 26px;
+    font-family: muli;
+    text-align: center;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-bottom: 100px;
+    vertical-align: middle;
+    border: 2px solid black;
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    float: left;
+}
+
+Div.full-home-page {
+    font-family: muli;
+}
+
+Div.graph-layout {
+    margin-left: 100px;
+    margin-right: 100px;
+    font-family: muli;
+}
+
+.vertical-menu {
+  width: 400px;
+  text-align: center;
+  margin-left: 100px;
+}
+
+.vertical-menu a {
+  background-color: #eee;
+  border-radius: 35px;
+  color: black;
+  display: block;
+  margin-bottom: 60px;
+  padding: 12px;
+  text-decoration: underline;
+}
+
+.vertical-menu a:hover {
+  background-color: #ccc;
+}
+
+h1.page-header {
+    font-family: muli;
+    color: white;
+    text-align: center;
+    font-size: 48px;
+    margin-bottom: 50px;
+}
