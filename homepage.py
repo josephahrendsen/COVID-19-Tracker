@@ -21,7 +21,7 @@ layout = html.Div(children=[
                 html.P("Effects on US", className='subtext', style={'margin-left': '100px'}),
                 dcc.Link(html.Button(className='home-page-button',
                                      style={'background-image': 'url(../assets/flag_icon.png', 'margin-left': '100px'}
-                                     ), href='/#'),
+                                     ), href='/effects'),
             ], className='button-wrapper'),
 
             html.H1("COVID-19 Tracker", className="home-page-title"),

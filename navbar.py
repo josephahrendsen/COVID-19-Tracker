@@ -7,7 +7,7 @@ def Navbar():
     navbar = dbc.NavbarSimple(
         children=[
             dbc.NavItem(dbc.NavLink("Analytics", href="/graphs"), style={'margin-right': '15px'}),
-            dbc.NavItem(dbc.NavLink("National Effects", href="/#"), style={'margin-right': '15px'}),
+            dbc.NavItem(dbc.NavLink("National Effects", href="/effects"), style={'margin-right': '15px'}),
             dbc.NavItem(dbc.NavLink("What to Do", href="/info/what_to_do"), style={'margin-right': '15px'}),
             dbc.NavItem(dbc.NavLink("About", href="/info/about"), style={'margin-right': '15px'}),
             dbc.NavItem(dbc.NavLink("Data Source", href="https://github.com/CSSEGISandData/COVID-19"))
