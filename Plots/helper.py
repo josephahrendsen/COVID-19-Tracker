@@ -131,7 +131,6 @@ class Confirmed:
 
     def get_all_counties_total_cases(self):
         """ Return all counties current number of cases sorted highest to lowest (data frame object) """
-        print(self.get_latest_data_date())
         filtered_df_confirmed = df_cases[df_cases['Province_State'] == self.state]
         new_df_confirmed = filtered_df_confirmed.groupby(['Admin2'])[self.get_latest_data_date()].sum().reset_index()
         new_df_confirmed = new_df_confirmed.sort_values(by=[self.get_latest_data_date()], ascending=[False]).reset_index()
@@ -139,7 +138,6 @@ class Confirmed:
 
     def get_all_counties_total_cases_unsorted(self):
         """ Return all counties current number of cases unsorted"""
-        print(self.get_latest_data_date())
         unfiltered_df_confirmed = df_cases[df_cases['Province_State'] == self.state]
         new_df_confirmed = unfiltered_df_confirmed.groupby(['Admin2'])[self.get_latest_data_date()].sum().reset_index()
         return new_df_confirmed[self.get_latest_data_date()]
@@ -148,14 +146,14 @@ class Confirmed:
         """ Calculate which dates to use from datasets (date[]) """
         days = []
         start_data_date = date(2020, 3, 1)
-        latest_data_date = date(2020, 4, 19)
+        latest_data_date = date(2020, 5, 4)
         delta = timedelta(days=1)
         while start_data_date <= latest_data_date:
             days.append(start_data_date.strftime("%#m/%#d/%y"))  # Add dates to days list
             start_data_date += delta
         self.days = days
         self.start_data_date = date(2020, 3, 1).strftime("%#m/%#d/%y")
-        self.latest_data_date = date(2020, 4, 19).strftime("%#m/%#d/%y")
+        self.latest_data_date = date(2020, 5, 4).strftime("%#m/%#d/%y")
         return days
 
     def get_days(self):
@@ -308,7 +306,6 @@ class Deaths:
 
     def get_all_counties_total_deaths(self):
         """ Return all counties current number of cases sorted highest to lowest (data frame object) """
-        print(self.get_latest_data_date())
         filtered_df_confirmed = df_deaths[df_deaths['Province_State'] == self.state]
         new_df_confirmed = filtered_df_confirmed.groupby(['Admin2'])[self.get_latest_data_date()].sum().reset_index()
         new_df_confirmed = new_df_confirmed.sort_values(by=[self.get_latest_data_date()], ascending=[False]).reset_index()
@@ -318,14 +315,14 @@ class Deaths:
         """ Calculate which dates to use from datasets (date[]) """
         days = []
         start_data_date = date(2020, 3, 1)
-        latest_data_date = date(2020, 4, 19)
+        latest_data_date = date(2020, 5, 4)
         delta = timedelta(days=1)
         while start_data_date <= latest_data_date:
             days.append(start_data_date.strftime("%#m/%#d/%y"))  # Add dates to days list
             start_data_date += delta
         self.days = days
         self.start_data_date = date(2020, 3, 1).strftime("%#m/%#d/%y")
-        self.latest_data_date = date(2020, 4, 19).strftime("%#m/%#d/%y")
+        self.latest_data_date = date(2020, 5, 4).strftime("%#m/%#d/%y")
         return days
 
     def get_days(self):
@@ -497,28 +494,34 @@ class Country:
         name of specified state
 
     """
-    df_usa = pd.read_csv('Datasets/USA-04-18-2020.csv')
-
+    df_usa = pd.read_csv('Datasets/USA-05-04-2020.csv')
+    df_usa = df_usa[df_usa['Country_Region'] == 'US']
     df_states = df_usa['Province_State'].unique()
 
     def get_top_ten_confirmed_states(self):
         df = self.df_usa
+        df = df.groupby(['Province_State'])['Confirmed'].sum().reset_index()
         df = df.sort_values(by=['Confirmed'], ascending=[False]).head(10).reset_index()
         return df['Province_State']
 
     def get_top_ten_state_cases(self):
         df = self.df_usa
+        df = df.groupby(['Province_State'])['Confirmed'].sum().reset_index()
         df = df.sort_values(by=['Confirmed'], ascending=[False]).head(10).reset_index()
         return df['Confirmed']
 
     def get_top_ten_deaths_states(self):
         df = self.df_usa
+        df = df.groupby(['Province_State'])['Deaths'].sum().reset_index()
         df = df.sort_values(by=['Deaths'], ascending=[False]).head(10).reset_index()
         return df['Province_State']
 
     def get_top_ten_state_deaths(self):
         df = self.df_usa
+        df = df.groupby(['Province_State'])['Deaths'].sum().reset_index()
         df = df.sort_values(by=['Deaths'], ascending=[False]).head(10).reset_index()
         return df['Deaths']
+
+
 
 

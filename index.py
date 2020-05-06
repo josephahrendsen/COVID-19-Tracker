@@ -5,9 +5,10 @@ from dash.dependencies import Input, Output
 from app import app
 from homepage import Homepage
 from graphs import Graphs
+from effects import Effects
 from Plots import state_county_confirmed_line_chart, daily_changes_bar_chart
 from Plots import state_county_death_line_chart
-from Plots import us_cases, us_deaths
+from Plots import us_cases, us_deaths, stocks
 from info import about, what_to_do
 
 app.layout = html.Div([
@@ -29,10 +30,14 @@ def display_page(pathname):
         return us_deaths.get_layout()
     elif pathname == '/Plots/state_county_death_line_chart':
         return state_county_death_line_chart.get_layout()
+    elif pathname == '/Plots/stocks':
+        return stocks.get_layout()
     elif pathname == '/info/about':
         return about.get_layout()
     elif pathname == '/info/what_to_do':
         return what_to_do.get_layout()
+    elif pathname == '/effects':
+        return Effects()
     elif pathname == '/graphs':
         return Graphs()
     else:

@@ -8,46 +8,38 @@ from app import app
 
 nav = Navbar()
 
-layout = html.Div(className='full-home-page', children=[
-    html.H1("COVID-19 Tracker",
-            style={
-                'textAlign': 'center',
-                'color': 'white',
-                'font-size': '72px',
-                'margin-top': '25px',
-                'margin-bottom': '50px'
-            }
-            ),
+layout = html.Div(children=[
     html.Div([
-        html.Div(className='home-page-div', children=[
-            html.A('Analytics', href='/graphs', style={'color': 'white'})
-        ]),
-        html.Div(className='home-page-div', children=[
-            html.A('Effects on the United States', href='/#', style={'color': 'white'})
-        ]),
-        html.Div(className='home-page-div', children=[
-            html.A('What to do', href='/info/what_to_do', style={'color': 'white'})
-        ]),
-        html.Div(className='home-page-div', children=[
-            html.A('About', href='/info/about', style={'color': 'white'})
-        ]),
-        ], style={'marginBottom': 50, 'marginTop': 25, 'width': '1000px',
-                  'border': '2px solid black', 'overflow': 'hidden', 'margin': '0 auto'}
-        )
-        # html.Div([
-        #     dcc.Link(html.Button("Total Cases in the United States", className='button'),
-        #              href='/Plots/state_county_confirmed_line_chart'),
-        #     dcc.Link(html.Button("Total Deaths in the United States", className='button'),
-        #              href='/Plots/state_county_confirmed_line_chart'),
-        #     dcc.Link(html.Button("Total Cases by State and County", className='button'),
-        #              href='/Plots/state_county_confirmed_line_chart'),
-        #     dcc.Link(html.Button("Total Deaths by State and County", className='button'),
-        #              href='/Plots/state_county_confirmed_line_chart'),
-        #     dcc.Link(html.Button("Daily Cases by State and County", className='button'),
-        #              href='/Plots/state_county_confirmed_line_chart')
-        #     ], style={'marginBottom': 50, 'marginTop': 25, 'width': '1200px', 'height' : '1000px',
-        #           'border': '1px solid black', 'overflow': 'hidden', 'margin': '0 auto'}),
-        #],
+        html.Div([
+            html.Div([
+                html.P("Analytics", className='subtext'),
+                dcc.Link(html.Button(className='home-page-button',
+                                     style={'background-image': 'url(../assets/analytics_icon.png'}
+                                     ), href='/graphs'),
+            ], className='button-wrapper'),
+            html.Div([
+                html.P("Effects on US", className='subtext', style={'margin-left': '100px'}),
+                dcc.Link(html.Button(className='home-page-button',
+                                     style={'background-image': 'url(../assets/flag_icon.png', 'margin-left': '100px'}
+                                     ), href='/#'),
+            ], className='button-wrapper'),
+
+            html.H1("COVID-19 Tracker", className="home-page-title"),
+
+            html.Div([
+                dcc.Link(html.Button(className='home-page-button',
+                                     style={'background-image': 'url(../assets/checklist_icon.png'}
+                                     ), href='/info/what_to_do'),
+                html.P("What to Do", className='subtext')
+            ], className='button-wrapper'),
+            html.Div([
+                dcc.Link(html.Button(className='home-page-button',
+                                     style={'background-image': 'url(../assets/about_icon.png', 'margin-left': '100px'}
+                                     ), href='/info/about'),
+                html.P("About", className='subtext', style={'margin-left': '100px'}),
+            ], className='button-wrapper'),
+        ], className='home-page-wrapper')
+    ], className='full-home-page'),
 ])
 
 
@@ -55,6 +47,6 @@ def Homepage():
     app_layout = html.Div([
         nav,
         layout
-    ])
+    ], style={'background-image': 'url(../assets/background.png', 'background-size': 'cover', 'height': '900px'})
 
     return app_layout

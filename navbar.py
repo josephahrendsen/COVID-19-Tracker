@@ -15,7 +15,7 @@ def Navbar():
 
         brand="Home",
         brand_href="/home",
-        #sticky="top",
+        sticky="top",
         style={'margin-bottom': '25px', 'font-family': 'mari', 'fontSize': '18px'}
     )
     return navbar
