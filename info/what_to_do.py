@@ -14,7 +14,7 @@ layout = html.Div(style={'fontSize': '22px', 'margin-left': '100px', 'margin-rig
     html.P("3) Cover your face with a cloth mask in public! Those without symptoms can still be contagious. Limit exposure from sneezing, coughing, and touching the face with a cover. "),
     html.P("4) Cover your coughs and sneezes! Residue on tissues or your hands from coughing and sneezing can get transported into the public if they are not scrubbed off. Hygiene guidelines like these should be followed even in private; infecting surfaces and the air is more difficult then stopping the particles from spreading in the first place."),
     html.P("5) Clean and disinfect! Residue can accumulate on surfaces like desks, countertops, and doorknobs. Any surface with regular human contact could be cleaned regularly to mitigate spread. "),
-    html.P("Visit the Center for Disease Control website for more information on the epidemic: https://www.cdc.gov/coronavirus/2019-ncov/index.html")
+    html.A("Visit the Center for Disease Control website for more information on the epidemic:", href="https://www.cdc.gov/coronavirus/2019-ncov/index.html")
     ],
 )
 

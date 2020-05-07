@@ -39,7 +39,8 @@ layout = html.Div(children=[
                           },
                   ),
         html.Br(),
-        html.P("The United States Stock Market has taken a major hit")
+        html.P("The United States Stock Market has taken a major hit. On March 2020, the Dow Jones Industrial Index"
+               "reached the lowest it has been since November, 2016", style={'font-size': '20px', 'font-family': 'muli'})
     ], className='graph-layout'),
 ])
 

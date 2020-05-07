@@ -149,3 +149,16 @@ Div.bottom-div {
 A.bottom-link {
     margin-right: 30px;
 }
+
+Img.headshot {
+    width: 250px;
+    height: 333px;
+}
+
+P.about-subtext {
+    font-size: 30px;
+    font-family: muli;
+    color: white;
+    text-align: center;
+    width: 250px;
+}

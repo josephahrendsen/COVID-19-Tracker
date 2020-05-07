@@ -3,6 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from Plots import stocks
+from info import pollution_tracker, unemployment
 from navbar import Navbar
 from app import app
 
@@ -14,7 +15,10 @@ layout = html.Div(children=[
         stocks.layout,
         html.Hr(),
 
+        unemployment.layout,
+        html.Hr(),
 
+        pollution_tracker.layout
     ]),
 ])
 
