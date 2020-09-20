@@ -25,7 +25,7 @@ layout = html.Div(style={'fontSize': '22px', 'margin-left': '100px', 'margin-rig
     html.Br(),
     html.Div([
         html.Div([
-            html.Img(className='headshot', src='../assets/joseph_headshot.jpg'),
+            html.Img(className='headshot', src='../assets/joseph_headshot1.jpg'),
             html.P("Joseph Ahrendsen", className='about-subtext'),
             html.P("jahrends@uncc.edu", className='about-subtext')
         ], className='button-wrapper'),
