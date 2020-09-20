@@ -16,6 +16,6 @@ At this point, you have to manuallly update the data from the John Hopkins githu
 
 ### Screenshots
 <p float="left">
-  <img src="https://github.com/josephahrendsen/COVID-19-Tracker/blob/master/screenshots/daily_case_line_chart.PNG" height="300" width="500">
-  <img src="https://github.com/josephahrendsen/COVID-19-Tracker/blob/master/screenshots/analytics_home.PNG" height="300" width="500">
+  <img src="https://github.com/josephahrendsen/COVID-19-Tracker/blob/master/screenshots/daily_case_line_chart.PNG" height="300" width="600">
+  <img src="https://github.com/josephahrendsen/COVID-19-Tracker/blob/master/screenshots/analytics_home.PNG" height="300" width="600">
 </p>
